@@ -14,7 +14,7 @@ def weights_init(m):
         nn.init.xavier_uniform_(m.weight.data)
         nn.init.constant_(m.bias, 0.1)
 
-train_path = '../data_preprocessing/anno_store/imglist_anno_12.txt'
+train_path = '../data_preprocessing/anno_store/imglist_anno_12_train.txt'
 val_path = '../data_preprocessing/anno_store/imglist_anno_12_val.txt'
 batch_size = 64
 dataloaders = {'train': torch.utils.data.DataLoader(ListDataset(train_path), batch_size=batch_size, shuffle=True),
@@ -42,7 +42,7 @@ best_loss = 100
 loss_cls = nn.CrossEntropyLoss()
 loss_offset = nn.MSELoss()
 
-num_epochs = 16
+num_epochs = 100
 for epoch in range(num_epochs):
     print('Epoch {}/{}'.format(epoch, num_epochs-1))
     print('-' * 10)

@@ -67,17 +67,19 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='LPR Demo')
     parser.add_argument("-image", help='image path', default='data/ccpd_weather/吉BTW976.jpg', type=str)
+    parser.add_argument("-lprnet_model", help='lprnet model', default='weights/Final_LPRNet_model.pth', type=str)
+    parser.add_argument("-stn_model", help='stn model', default='weights/Final_STN_model.pth', type=str)
     args = parser.parse_args()
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
     lprnet = LPRNet(class_num=len(CHARS), dropout_rate=0)
     lprnet.to(device)
-    lprnet.load_state_dict(torch.load('weights/Final_LPRNet_model.pth', map_location=lambda storage, loc: storage))
+    lprnet.load_state_dict(torch.load(args.lprnet_model, map_location=lambda storage, loc: storage))
     lprnet.eval()
     
     STN = STNet()
     STN.to(device)
-    STN.load_state_dict(torch.load('weights/Final_STN_model.pth', map_location=lambda storage, loc: storage))
+    STN.load_state_dict(torch.load(args.stn_model, map_location=lambda storage, loc: storage))
     STN.eval()
     
     print("Successful to build network!")
@@ -98,6 +100,7 @@ if __name__ == '__main__':
     
     transformed_img = convert_image(transfer)
     cv2.imshow('transformed', transformed_img)
+    cv2.imwrite('transformed.jpg', transformed_img)
     
     cv2.imshow("test", img)
     cv2.waitKey()

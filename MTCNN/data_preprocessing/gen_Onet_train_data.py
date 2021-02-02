@@ -12,10 +12,16 @@ import random
 from imutils import paths
 from MTCNN import create_mtcnn_net
 
-img_dir = "../data_set/ccpd_val"
+# img_dir = "../data_set/ccpd_val"
+img_dir = "../../ccpd/ccpd_val"
 pos_save_dir = "../data_set/val/24/positive"
 part_save_dir = "../data_set/val/24/part"
 neg_save_dir = "../data_set/val/24/negative"
+
+img_dir = "../../ccpd/ccpd_train"
+pos_save_dir = "../data_set/train/24/positive"
+part_save_dir = "../data_set/train/24/part"
+neg_save_dir = "../data_set/train/24/negative"
 
 if not os.path.exists(pos_save_dir):
     os.mkdir(pos_save_dir)
@@ -28,6 +34,10 @@ if not os.path.exists(neg_save_dir):
 f1 = open(os.path.join('anno_store', 'pos_24_val.txt'), 'w')
 f2 = open(os.path.join('anno_store', 'neg_24_val.txt'), 'w')
 f3 = open(os.path.join('anno_store', 'part_24_val.txt'), 'w')
+
+f1 = open(os.path.join('anno_store', 'pos_24_train.txt'), 'w')
+f2 = open(os.path.join('anno_store', 'neg_24_train.txt'), 'w')
+f3 = open(os.path.join('anno_store', 'part_24_train.txt'), 'w')
 
 # anno_file: store labels of the wider face training data
 img_paths = []
@@ -58,7 +68,7 @@ for annotation in img_paths:
 
     image = cv2.imread(im_path)
 
-    bboxes = create_mtcnn_net(image, 50, device, p_model_path='../train/pnet_Weights', r_model_path=None, o_model_path=None)
+    bboxes = create_mtcnn_net(image, [50,50], device, p_model_path='../train/pnet_Weights', o_model_path=None)
     dets = np.round(bboxes[:, 0:4])
 
     if dets.shape[0] == 0:

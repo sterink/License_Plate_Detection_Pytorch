@@ -183,5 +183,6 @@ if __name__ == '__main__':
         
     image = cv2.resize(image, (0, 0), fx = 1/args.scale, fy = 1/args.scale, interpolation=cv2.INTER_CUBIC)
     cv2.imshow('image', image)
+    cv2.imwrite('output.jpg',image)
     cv2.waitKey(0)
     cv2.destroyAllWindows()

@@ -8,7 +8,7 @@ Created on Thu Jul  4 09:07:10 2019
 import os
 from model.LPRNET import LPRNet, CHARS
 from model.STN import STNet
-from data.load_data import LPRDataLoader, collate_fn
+from data.load_data import LPRDataSet, collate_fn
 from Evaluation import eval, decode
 import torch
 from torch.utils.data import DataLoader
@@ -35,8 +35,9 @@ if __name__ == '__main__':
     parser.add_argument('--img_dirs_val', default="./data/validation", help='the validation images path')
     parser.add_argument('--dropout_rate', default=0.5, help='dropout rate.')
     parser.add_argument('--epoch', type=int, default=33, help='number of epoches for training')
-    parser.add_argument('--batch_size', default=128, help='batch size')
+    parser.add_argument('--batch_size', default=128, help='batch size', type=int)
     args = parser.parse_args()
+    print(args.batch_size)
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     
     lprnet = LPRNet(class_num=len(CHARS), dropout_rate=args.dropout_rate)
@@ -49,8 +50,8 @@ if __name__ == '__main__':
     STN.load_state_dict(torch.load('weights/STN_model_Init.pth', map_location=lambda storage, loc: storage))
     print("STN loaded")
     
-    dataset = {'train': LPRDataLoader([args.img_dirs_train], args.img_size),
-               'val': LPRDataLoader([args.img_dirs_val], args.img_size)}
+    dataset = {'train': LPRDataSet([args.img_dirs_train], args.img_size),
+               'val': LPRDataSet([args.img_dirs_val], args.img_size)}
     dataloader = {'train': DataLoader(dataset['train'], batch_size=args.batch_size, shuffle=False, num_workers=4, collate_fn=collate_fn),
                   'val': DataLoader(dataset['val'], batch_size=args.batch_size, shuffle=False, num_workers=4, collate_fn=collate_fn)}
     print('training dataset loaded with length : {}'.format(len(dataset['train'])))
@@ -64,9 +65,8 @@ if __name__ == '__main__':
     train_logging_file = 'train_logging.txt'
     validation_logging_file = 'validation_logging.txt'
     save_dir = 'saving_ckpt'
-    if os.path.exists(save_dir):
-        raise NameError('model dir exists!')
-    os.makedirs(save_dir)
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir)
     
     start_time = time.time()
     total_iters = 0
@@ -123,7 +123,6 @@ if __name__ == '__main__':
                     
                     # save model
             if total_iters % 900 == 0:
-
                 torch.save({
                     'iters': total_iters,
                     'net_state_dict': lprnet.state_dict()},
@@ -145,6 +144,8 @@ if __name__ == '__main__':
                 if best_acc <= ACC:
                     best_acc = ACC
                     best_iters = total_iters
+                    torch.save(lprnet.state_dict(), 'weights/Final_LPRNet_model.pth')
+                    torch.save(STN.state_dict(), 'weights/Final_STN_model.pth')
                 
                 print("Epoch {}/{}, Iters: {:0>6d}, validation_accuracy: {:.4f}".format(epoch, args.epoch-1, total_iters, ACC))
                 with open(validation_logging_file, 'a') as f:

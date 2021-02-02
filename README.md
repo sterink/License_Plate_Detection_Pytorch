@@ -18,12 +18,50 @@ LPRNet coding is heavily followed by [sirius-ai](https://github.com/sirius-ai/LP
 ## Training on MTCNN
 * Download the [CCPD](https://github.com/detectRecog/CCPD) data and put it into 'ccpd' folder
 * run 'MTCNN/data_set/preprocess.py' to split training data and validation data and put in "ccpd_train" and "ccpd_val" folders respectively.
-* run 'MTCNN/data_preprocessing/gen_Pnet_train_data.py', 'MTCNN/data_preprocessing/gen_Onet_train_data.py','MTCNN/data_preprocessing/assemble_Pnet_imglist.py', 'MTCNN/data_preprocessing/assemble_Onet_imglist.py' for training data preparation.
+python3 MTCNN/data_set/preprocess.py -image /home/zwzj/Downloads/CCPD2019/ccpd_base -dir_train ccpd/ccpd_train -dir_val ccpd/ccpd_val
+
+* run 'MTCNN/data_preprocessing/gen_Pnet_val_data.py', 'MTCNN/data_preprocessing/gen_Onet_val_data.py','MTCNN/data_preprocessing/assemble_Pnet_val_imglist.py', 'MTCNN/data_preprocessing/assemble_Onet_val_imglist.py' for training data preparation (validation data part).
+cd MTCNN/data_preprocessing
+python3 gen_Pnet_val_data.py
+python3 assemble_Pnet_val_imglist.py
+python3 gen_Pnet_train_data.py
+python3 assemble_Pnet_train_imglist.py
+cd ../..
+
+* run 'MTCNN/data_preprocessing/gen_Pnet_train_data.py', 'MTCNN/data_preprocessing/gen_Onet_train_data.py','MTCNN/data_preprocessing/assemble_Pnet_train_imglist.py', 'MTCNN/data_preprocessing/assemble_Onet_train_imglist.py' for training data preparation (train data part).
+
 * run 'MTCNN/train/Train_Pnet.py' and 'MTCNN/train/Train_Onet.py
+cd MTCNN/train
+python3 Train_Pnet.py
+cd ../..
+
+cd MTCNN/data_preprocessing
+python3 gen_Onet_val_data.py
+python3 assemble_Onet_val_imglist.py
+python3 gen_Onet_train_data.py
+python3 assemble_Onet_train_imglist.py
+cd ../..
+
+
+cd MTCNN/train
+python3 Train_Onet.py
+cd ../..
+
+mv MTCNN/train/pnet_Weights MTCNN/weights/
+mv MTCNN/train/onet_Weights MTCNN/weights/
+
+cd MTCNN
+python3 MTCNN.py --test_image ../test/5.jpg
+cd ..
 
 ## Training on LPRNet
 * run 'LPRNet/data/preprocess.py' to prepare the dataset
+cd LPRNet/data
+python3 preprocess.py -image /home/zwzj/Downloads/CCPD2019/ccpd_base
+cd ../..
+
 * run 'LPRNet/LPRNet_Train.py' for training 
+python3 LPRNet_Train.py --batch_size 64
 
 ## Test
 * run 'MTCNN/MTCNN.py' for license plate detection

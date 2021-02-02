@@ -1,5 +1,7 @@
 import torch
-from torch.utils.data import *
+# from torch.utils import data
+from torch.utils.data import Dataset,DataLoader
+# .data import *
 from imutils import paths
 import numpy as np
 import random
@@ -18,7 +20,7 @@ CHARS = ['京', '沪', '津', '渝', '冀', '晋', '蒙', '辽', '吉', '黑',
 
 CHARS_DICT = {char:i for i, char in enumerate(CHARS)}
 
-class LPRDataLoader(Dataset):
+class LPRDataSet(Dataset):
     def __init__(self, img_dir, imgSize, PreprocFun=None):
         self.img_dir = img_dir
         self.img_paths = []
@@ -88,7 +90,7 @@ def collate_fn(batch):
         
 if __name__ == "__main__":
     
-    dataset = LPRDataLoader(['validation'], (94, 24))   
+    dataset = LPRDataSet(['validation'], (94, 24))   
     dataloader = DataLoader(dataset, batch_size=128, shuffle=False, num_workers=2, collate_fn=collate_fn)
     print('data length is {}'.format(len(dataset)))
     for imgs, labels, lengths in dataloader:

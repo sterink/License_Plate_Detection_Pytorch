@@ -8,7 +8,7 @@ Created on Thu Jul  4 09:07:10 2019
 
 from model.LPRNET import LPRNet, CHARS
 from model.STN import STNet
-from data.load_data import LPRDataLoader, collate_fn
+from data.load_data import LPRDataSet, collate_fn
 import torch
 from torch.utils.data import DataLoader
 import numpy as np
@@ -27,7 +27,7 @@ def convert_image(inp):
 def visualize_stn():
     with torch.no_grad():
         # Get a batch of training data
-        dataset = LPRDataLoader([args.img_dirs], args.img_size)   
+        dataset = LPRDataSet([args.img_dirs], args.img_size)   
         dataloader = DataLoader(dataset, batch_size=1, shuffle=False, num_workers=2, collate_fn=collate_fn) 
         imgs, labels, lengths = next(iter(dataloader))
         

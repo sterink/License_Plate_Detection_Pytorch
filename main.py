@@ -19,7 +19,7 @@ import cv2
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='MTCNN & LPR Demo')
-    parser.add_argument("-image", help='image path', default='test/8.jpg', type=str)
+    parser.add_argument("--image", help='image path', default='test/8.jpg', type=str)
     parser.add_argument("--scale", dest='scale', help="scale the iamge", default=1, type=int)
     parser.add_argument('--mini_lp', dest='mini_lp', help="Minimum face to be detected", default=(50, 15), type=int)
     args = parser.parse_args()
@@ -65,4 +65,5 @@ if __name__ == '__main__':
     image = cv2.resize(image, (0, 0), fx = 1/args.scale, fy = 1/args.scale, interpolation=cv2.INTER_CUBIC)
     cv2.imshow('image', image)
     cv2.waitKey(0)
+    cv2.imwrite('lpr_out.jpg',image)
     cv2.destroyAllWindows()
